@@ -1,0 +1,63 @@
+﻿@model TesteConsultaCep.Models.CepBD
+
+@{
+    ViewData["Title"] = "Index";
+    string display = "none";
+    string display2 = "none";
+    string mensagem = "";
+    Object Cep = new Object();
+    if (TempData["VerificaCepExisteNaBase"] != null && TempData["VerificaCepExisteNaBase"].Equals(true))
+    {
+        Cep = TempData["valorDoCep"];
+        display = "flex";
+        display2 = "flex";
+        mensagem = "Logradouro ainda não existe na base, quer cadastrar esse Logradouro?";
+    }
+    if (TempData["VerificaCepExisteNaBase"] != null && TempData["VerificaCepExisteNaBase"].Equals(false))
+    {
+        display = "flex";
+        display2 = "none";
+        mensagem = "O CEP " + TempData["valorDoCep"] + " já existente na base de dados";
+    }
+}
+
+
+<h1>Consulta Cep</h1>
+
+<h4>Digite um cep para consultar se já existe na base:</h4>
+
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" asp-action="Consulta">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <input type="text" name="Cep" placeholder="Digite o cep">
+                <span style="color:tomato;">@TempData["Resultado"]</span></br>
+                </br>
+                <input type="submit" value="Consultar" class="btn btn-primary" />
+            </div>
+        </form>
+        
+        
+    </div>
+    <div style="display:@display">
+        <form method="post" asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+
+                <h2>@mensagem </h2>
+                <div style ="display:@display2">
+                    <a asp-action="NovoLogradouro" asp-route-id="@Cep"> <input type="button" value="Sim" class="btn btn-primary" style="margin-right:10px"</a>
+                    <a asp-action="Index"> <input type="button" value="Não" class="btn btn-primary" </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
